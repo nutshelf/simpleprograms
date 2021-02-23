@@ -1,6 +1,6 @@
-board = "123456789"
-ai_symbol = "X"
-user_symbol = "O"
+# board = "123456789"
+# ai_symbol = "X"
+# user_symbol = "O"
 x = 0
 while True:
     x = int(input("Введи число в десятичной системе счисления: "))
