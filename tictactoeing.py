@@ -8,8 +8,7 @@ game_is_on = True
 def draw_field (field):
     """ Результат - замещение цифр на пробел и вывод поля  """
     for i in range(10):
-        if field[i] in "123456789":
-            field[i] = " "
+        field = field.replace(str(i)," ")
     print(field[0] + "|" + field[1] + "|" + field[2])
     print("-+-+-")
     print(field[3] + "|" + field[4] + "|" + field[5])
@@ -34,6 +33,17 @@ def who_wins(f:str, sym1:str, sym2:str):
             return s[0]
     return ""
 
+def ai_turn(field, sym):
+    """ Рекурсивная функция рандомного хода игрока sym с возвратом назад количества выигрышей
+     в нижней части дерева"""
+    # получили field
+    # выбрали одну из доступных для хода клеток
+        #+ поставили sym
+        # проверили на выигрыш
+        #-
+    # вышли
+    return [user, ai, draw]
+
 # ход игры
 while game_is_on:
     draw_field(field_state)
@@ -41,12 +51,12 @@ while game_is_on:
         while True:
             user_turn = int(input("Ваш ход (введите номер клетки 1-9):"))
             if field_state[user_turn] in "123456789":
-                field_state[user_turn] = user_symbol
+                field_state = field_state.replace(str(user_turn) , user_symbol)
                 break
             else:
                 print("ой, не туда! еще разок")
     else:
-        field_state[proposed_turn(field_state,ai_symbol)] = ai_symbol
+        field_state[ai_turn(field_state, ai_symbol, 0)] = ai_symbol
     cu_pointer = (cu_pointer + 1) % 2
     winner_is = who_wins(field_state,ai_symbol,user_symbol)
     game_is_on = available_cells(field_state) and (winner_is == "")
@@ -56,7 +66,7 @@ if winner_is == user_symbol:
     print("you wins!")
 elif winner_is == ai_symbol:
     print("AI wins!")
-elif available_cells(field_state) == []:
+elif not available_cells(field_state):
     print("ничья, свободных клеток нет")
 else:
-    print("свободные клетки есть (" + available_cells(field_state) + "), но никто не выиграл. Чудеса! еррор конечно")
+    print("свободные клетки есть (" + str(available_cells(field_state)) + "), но никто не выиграл. Чудеса! еррор конечно")
