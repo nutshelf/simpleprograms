@@ -67,13 +67,13 @@ while game_is_on:
         available_cell_probability = []
         max_prob = 0
         for cell in available_cells:
-            available_cell_probability = \
-                make_ai_turn(field_state.replace(str(cell), ai_symbol))[1] - \
-                make_ai_turn(field_state.replace(str(cell), ai_symbol))[0]
+            available_cell_probability = (
+                make_ai_turn(field_state.replace(str(cell), ai_symbol))[1] -
+                make_ai_turn(field_state.replace(str(cell), ai_symbol))[0])
             if available_cell_probability > max_prob:
                 max_prob = available_cell_probability
                 max_i = cell
-        field_state = field_state.replace(max_i,ai_symbol)
+        field_state = field_state.replace(max_i, ai_symbol)
     cu_pointer = (cu_pointer + 1) % 2
     winner_is = who_wins(field_state, user_symbol, ai_symbol)
     game_is_on = get_available_cells(field_state) and (winner_is == "")
@@ -86,5 +86,6 @@ elif winner_is == ai_symbol:
 elif not get_available_cells(field_state):
     print("ничья, свободных клеток нет")
 else:
-    print(
-        "свободные клетки есть (" + str(get_available_cells(field_state)) + "), но никто не выиграл. Чудеса! еррор конечно")
+    print("свободные клетки есть (" +
+          str(get_available_cells(field_state)) +
+          "), но никто не выиграл. Чудеса! еррор конечно")
