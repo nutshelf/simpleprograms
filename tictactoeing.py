@@ -4,7 +4,7 @@ ai_symbol = "X"
 current_user = [user_symbol, ai_symbol]  # список для определения, чей ход
 cu_pointer = 0  # current user pointer - индекс для списка. 0 - ходит игрок, 1 - ходит компьютер
 game_is_on = True
-
+winner_is = ""
 
 def draw_field(field):
     """ ПР: Замещение цифр 0-9 на пробел и вывод поля  """
@@ -39,9 +39,14 @@ def who_wins(f: str, sym1: str, sym2: str):
     return ""
 
 
-def make_ai_turn(field, sym):
+def make_ai_turn(field):
     """ Ф: Рекурсивная функция рандомного хода игрока sym с выводом количества выигрышей
      в нижней части дерева"""
+    ai_turn_result = 0
+    for cell in get_available_cells(field):
+        ai_turn_result = make_ai_turn(field_state.replace(str(cell), ai_symbol))
+        winner_is = who_wins(field_state, user_symbol, ai_symbol)
+        if winner_is ==
     # получили field
     # выбрали одну из доступных для хода клеток
     # + поставили sym
@@ -50,42 +55,44 @@ def make_ai_turn(field, sym):
     # вышли
     return [user, ai, draw]
 
+def main ():
+    # ход игры
+    while game_is_on:
+        draw_field(field_state)
+        if cu_pointer == 0:
+            while True:
+                user_turn_cell_num = int(input("Ваш ход (введите номер клетки 1-9):"))
+                if field_state[user_turn_cell_num] in "123456789":
+                    field_state = field_state.replace(str(user_turn_cell_num), user_symbol)
+                    break
+                else:
+                    print("ой, не туда! еще разок")
+        else:
+            available_cells = get_available_cells(field_state)
+            available_cell_probability = []
+            max_prob = 0
+            max_i = 0
+            for cell in available_cells:
+                ai_turn_result = make_ai_turn(field_state.replace(str(cell), ai_symbol))
+                available_cell_probability = ai_turn_result[1] - ai_turn_result[0]
+                if available_cell_fines > max_prob:
+                    max_prob = available_cell_fines
+                    max_i = cell
+            field_state = field_state.replace(max_i, ai_symbol)
+        cu_pointer = (cu_pointer + 1) % 2
+        winner_is = who_wins(field_state, user_symbol, ai_symbol)
+        game_is_on = get_available_cells(field_state) and (winner_is == "")
 
-# ход игры
-while game_is_on:
-    draw_field(field_state)
-    if cu_pointer == 0:
-        while True:
-            user_turn_cell_num = int(input("Ваш ход (введите номер клетки 1-9):"))
-            if field_state[user_turn_cell_num] in "123456789":
-                field_state = field_state.replace(str(user_turn_cell_num), user_symbol)
-                break
-            else:
-                print("ой, не туда! еще разок")
+    # игра окончена
+    if winner_is == user_symbol:
+        print("you wins!")
+    elif winner_is == ai_symbol:
+        print("AI wins!")
+    elif not get_available_cells(field_state):
+        print("ничья, свободных клеток нет")
     else:
-        available_cells = get_available_cells(field_state)
-        available_cell_probability = []
-        max_prob = 0
-        for cell in available_cells:
-            available_cell_probability = (
-                make_ai_turn(field_state.replace(str(cell), ai_symbol))[1] -
-                make_ai_turn(field_state.replace(str(cell), ai_symbol))[0])
-            if available_cell_probability > max_prob:
-                max_prob = available_cell_probability
-                max_i = cell
-        field_state = field_state.replace(max_i, ai_symbol)
-    cu_pointer = (cu_pointer + 1) % 2
-    winner_is = who_wins(field_state, user_symbol, ai_symbol)
-    game_is_on = get_available_cells(field_state) and (winner_is == "")
+        print("свободные клетки есть (" +
+              str(get_available_cells(field_state)) +
+              "), но игра закончена и никто не выиграл. Чудеса! еррор конечно")
 
-# игра окончена
-if winner_is == user_symbol:
-    print("you wins!")
-elif winner_is == ai_symbol:
-    print("AI wins!")
-elif not get_available_cells(field_state):
-    print("ничья, свободных клеток нет")
-else:
-    print("свободные клетки есть (" +
-          str(get_available_cells(field_state)) +
-          "), но никто не выиграл. Чудеса! еррор конечно")
+main()
