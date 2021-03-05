@@ -99,7 +99,7 @@ def main():
                     if available_cell_win_ratio[-1] > max_ratio:
                         max_ratio = available_cell_win_ratio[-1]
                         max_ratio_cell_index = cell
-                        max_ratio_cell_results = ai_turn_result # удалить потом можно
+                        max_ratio_cell_results = ai_turn_result # удалить потом можно эту и следующую строку
                 print("Из доступных клеток самая выгодная №", max_ratio_cell_index,
                       ". Поб:пр:нич =", max_ratio_cell_results,
                       "максимальная вероятность выигрыша по всем достпуным клеткам", max_ratio)
