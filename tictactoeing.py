@@ -1,11 +1,3 @@
-field_state = "123456789"
-user_symbol = "O"
-ai_symbol = "X"
-current_user = [user_symbol, ai_symbol]  # список для определения, чей ход
-cu_pointer = 0  # current user pointer - индекс для списка. 0 - ходит игрок, 1 - ходит компьютер
-game_is_on = True
-winner_is = ""
-
 def draw_field(field):
     """ ПР: Замещение цифр 0-9 на пробел и вывод поля  """
     for i in range(10):
@@ -39,60 +31,79 @@ def who_wins(f: str, sym1: str, sym2: str):
     return ""
 
 
-def make_ai_turn(field):
-    """ Ф: Рекурсивная функция рандомного хода игрока sym с выводом количества выигрышей
-     в нижней части дерева"""
-    ai_turn_result = 0
-    for cell in get_available_cells(field):
-        ai_turn_result = make_ai_turn(field_state.replace(str(cell), ai_symbol))
-        winner_is = who_wins(field_state, user_symbol, ai_symbol)
-        if winner_is ==
-    # получили field
-    # выбрали одну из доступных для хода клеток
-    # + поставили sym
-    # проверили на выигрыш
-    # -
-    # вышли
+def propose_turn(field, cu_pointer, gamers_symbol):
+    """ Ф: Рекурсивная функция предположения (псевдо)рандомного хода одного игрока Sym с выводом в качестве значения
+    количества выигрышей и ничьих при следующих ходах.
+     - field - строка из клеток поля
+     - cu_pointer - 'указатель' на то, чей ход следующий - игрока 0 или игрока 1
+     - gamers_symbols - список символов этих игроков (список из двух однобуквенных строк) ['a', 'b']
+    """
+    winner_is = who_wins(field, gamers_symbol[0], gamers_symbol[1])
+    available_cell = get_available_cells(field)
+    if winner_is == gamers_symbol[0]:
+        return [1,0,0]
+    elif winner_is == gamers_symbol[1]:
+        return [0,1,0]
+    elif not available_cell:
+        return [0,0,1]
+    else: # никто не выиграл еще и поле незаполнено - можно предположить следующий ход
+        cu_pointer = (cu_pointer + 1) % 2
+        for cell in available_cell:
+            ai_turn_result = propose_turn(field.replace(str(cell), ai_symbol))
+            winner_is = who_wins(field, user_symbol, ai_symbol)
+            if winner_is ==
+
     return [user, ai, draw]
 
 def main ():
+    field = "123456789"
+    user_symbol = "O"
+    ai_symbol = "X"
+    symbols = [user_symbol, ai_symbol]
+    cu_pointer = 0  # current user pointer - индекс игрока для совершения хода. 0 - ходит игрок, 1 - ходит компьютер
+    game_is_on = True
+    winner_is = ""
+
     # ход игры
     while game_is_on:
-        draw_field(field_state)
-        if cu_pointer == 0:
+        draw_field(field)
+        if cu_pointer == 0: # ход живого юзера
             while True:
                 user_turn_cell_num = int(input("Ваш ход (введите номер клетки 1-9):"))
-                if field_state[user_turn_cell_num] in "123456789":
-                    field_state = field_state.replace(str(user_turn_cell_num), user_symbol)
+                if field[user_turn_cell_num] in "123456789":
+                    field = field.replace(str(user_turn_cell_num), user_symbol)
                     break
                 else:
-                    print("ой, не туда! еще разок")
-        else:
-            available_cells = get_available_cells(field_state)
-            available_cell_probability = []
-            max_prob = 0
-            max_i = 0
-            for cell in available_cells:
-                ai_turn_result = make_ai_turn(field_state.replace(str(cell), ai_symbol))
-                available_cell_probability = ai_turn_result[1] - ai_turn_result[0]
-                if available_cell_fines > max_prob:
-                    max_prob = available_cell_fines
-                    max_i = cell
-            field_state = field_state.replace(max_i, ai_symbol)
+                    print("ой, не туда! там уже кто-то побывал. еще разок")
+        else: # ход искусственного интеллекта
+            available_cells = get_available_cells(field)
+            if len(available_cells) > 1:
+                available_cell_win_ratio = []
+                max_ratio = 0
+                max_ratio_cell_index = 0
+                for cell in available_cells:
+                    ai_turn_result = propose_turn(field.replace(str(cell), ai_symbol), 0, symbols)
+                    # главный алгоритм для определения клетки для хода - процент побед ИИ от всех возможных исходов
+                    available_cell_win_ratio.append(ai_turn_result[1] / sum (ai_turn_result))
+                    if available_cell_win_ratio[-1] > max_ratio:
+                        max_ratio = available_cell_win_ratio[-1]
+                        max_ratio_cell_index = cell
+            else: # len(available_cells) = 1
+                max_ratio_cell_index = available_cells
+            field = field.replace(max_ratio_cell_index, ai_symbol)
         cu_pointer = (cu_pointer + 1) % 2
-        winner_is = who_wins(field_state, user_symbol, ai_symbol)
-        game_is_on = get_available_cells(field_state) and (winner_is == "")
-
+        winner_is = who_wins(field, user_symbol, ai_symbol)
+        game_is_on = get_available_cells(field) and not winner_is
     # игра окончена
     if winner_is == user_symbol:
         print("you wins!")
     elif winner_is == ai_symbol:
         print("AI wins!")
-    elif not get_available_cells(field_state):
+    elif not get_available_cells(field):
         print("ничья, свободных клеток нет")
     else:
         print("свободные клетки есть (" +
-              str(get_available_cells(field_state)) +
+              str(get_available_cells(field)) +
               "), но игра закончена и никто не выиграл. Чудеса! еррор конечно")
 
 main()
