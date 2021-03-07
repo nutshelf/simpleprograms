@@ -18,4 +18,11 @@ def test_invert_array():
         print("test1 failed!")
 
 
-test_invert_array()
+# test_invert_array()
+
+# еще пример обращения со ссылками и создание новых объектов
+a = [1, 2, 3, 4, 5]
+for x in a:
+    x += 1
+print(a)
+
