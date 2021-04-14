@@ -51,11 +51,11 @@ def doubles_find(v: list, doubles: list):
 
 
 def main():
-    vocabulary = ["a", "b", "c", "a"]
+    vocabulary = ["a", "a", "a"]
     doubles = [0] * len(vocabulary)  # doubles elements quantity list
     doubles_find(vocabulary, doubles)
     print(vocabulary, doubles)
-    test_combination = [0, 1, 3, 2]
+    test_combination = [2, 1, 0]
     generate_all_combinations(vocabulary, doubles, test_combination)
 
 
