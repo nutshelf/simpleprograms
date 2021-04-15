@@ -1,30 +1,32 @@
-def generate_all_combinations(v: list, doubles: list, test_combination, m=-1, comb_indexes=[]):
+def generate_all_combinations(v: list, duplicates: list, m=-1, comb_indexes=None):
     """
     Generating all available combinations of elements from vocabulary v. Elements placed in combination by their
     indexes in "comb_indexes" list. Combinations with swapped equal elements are not included. Additional list used
     for this purpose.
     """
     assert v
+    num = 0
+    comb_indexes = comb_indexes if comb_indexes else []
     if m == -1:
         # for first call without m parameter
         m = len(v)
     if m == 0:
         if len(comb_indexes) == len(v):
-            # if there is no new elements for combining, print this combination
+            # if there is no new elements for combining, print this combination:
+            num = 1
             for i in comb_indexes:
                 # print(str(v[i]) + "(" + str(i) + ")", end="")
-                print(v[i], end="")
-            if test_combination == comb_indexes:
-                print(" found 1 test combination", end="")
+                print(v[i], end=" ")
             print()
-        # else: some elements skipped due to repeated(equal) elements, so no new combination can be generated.
-        return
+        # else: some elements skipped, lists will be different due to repeating elements,
+        # so no new combination can be generated.
+        return num
     for i in range(len(v)):
         if not (i in comb_indexes):
             # if element v[i] not used before, then it can be added to combination.
             can_be_added = True
-            if doubles[i] > 0:
-                # v[i] has doubles, try to find doubles in current combination via comb_indexes list
+            if duplicates[i] > 0:
+                # v[i] has duplicates, try to find duplicates in current combination via comb_indexes list
                 for j in comb_indexes:
                     if (v[j] == v[i]) and (j > i):
                         can_be_added = False
@@ -33,30 +35,32 @@ def generate_all_combinations(v: list, doubles: list, test_combination, m=-1, co
                         # combinated in order 2, 1, 0 because this order will not generate new combination. Algorithm
                         # generate combinations with ascending order indexes before combinations with other orders.
             if can_be_added:
-                # if element v[i] has no equal doubles
+                # if element v[i] has no equal duplicates
                 # and equal v[j] has, just add it finally.
                 comb_indexes.append(i)
-                generate_all_combinations(v, doubles, test_combination, m - 1, comb_indexes)
+                num += generate_all_combinations(v, duplicates, m - 1, comb_indexes)
                 comb_indexes.pop()
-    return
+    return num
 
 
-def doubles_find(v: list, doubles: list):
+def duplicates_find(v: list, duplicates: list):
     for i in range(len(v)):
         for j in range(i + 1, len(v)):
             if v[i] == v[j]:
-                doubles[i] += 1
-                doubles[j] += 1
+                duplicates[i] += 1
+                duplicates[j] += 1
     return
 
 
 def main():
-    vocabulary = ["a", "a", "a"]
-    doubles = [0] * len(vocabulary)  # doubles elements quantity list
-    doubles_find(vocabulary, doubles)
-    print(vocabulary, doubles)
-    test_combination = [2, 1, 0]
-    generate_all_combinations(vocabulary, doubles, test_combination)
+    v = [3, 32, 3, 32, 3]
+    duplicates = [0] * len(v)  # duplicates elements quantity list
+    duplicates_find(v, duplicates)
+    print("List of elements for combinating:", v,
+          "\nList of duplicates quantity:", duplicates,
+          "\nCombinations:")
+    num = generate_all_combinations(v, duplicates)
+    print("Number of combinations:", num)
 
 
 main()
