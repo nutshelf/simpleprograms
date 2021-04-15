@@ -55,7 +55,7 @@ def duplicates_find(v: list, duplicates: list):
 
 
 def main():
-    v = [3, 3, 32, 3]
+    v = [0, 1, 8, 9]
     duplicates = [0] * len(v)  # duplicates elements quantity list
     duplicates_find(v, duplicates)
     print("List of elements for combinating:", v,
