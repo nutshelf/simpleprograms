@@ -10,9 +10,8 @@
 from random import random as rnd
 
 
-def is_simple(x: int):
-    assert x > 1, "x is <=1"
-    if x != 2 and x % 2 == 0:
+def is_prime(x: int):
+    if x % 2 == 0 and x != 2:
         return False
     for i in range(3, int(x**0.5)+1, 2):
         if x % i == 0:
@@ -42,18 +41,21 @@ def print_a(a: list):
 
 def main():
     a = []
+    max = 0
     for i in range(1000000):
-        x = int(rnd() * 10 ** (rnd() * 10)) + 2
+        x = int(rnd() * 10 ** (rnd() * 5)) + 2
+        if x > max:
+           max = x
         #print(x, end=" ") #output all numbers
-        if not (x in a) and is_simple(x):
+        if not (x in a) and is_prime(x):
             add(a, x)
-    #print()
+    print("max num at all:", max)
     if a:
-        print("All simple numbers in ascending order:")
+        #print("All prime numbers in ascending order:")
         #print_a(a)
         print("Quantity of numbers", len(a))
     else:
-        print("There were no simple numbers")
+        print("There were no prime numbers")
     return
 
 
