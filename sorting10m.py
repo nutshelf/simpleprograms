@@ -47,10 +47,23 @@ def item_in_list_binary_search(a: list, x, lb=None, ub=None):
         lb = 0
     if ub == None:
         ub = len(a)
-    mid = (lb + ub) / 2
+    mid = int((lb + ub) / 2)
     #desc order list
     if a[0] < a[-1]:
+        mn = 1
+    elif a[0] > a[-1]:
+        mn = -1
+    else: # a[0] == a[-1] --> len = 1
+
+
         if a[mid] < x:
+            res = item_in_list_binary_search(a, x, mid, ub)
+        elif x < a[mid]:
+            res = item_in_list_binary_search(a, x, lb, mid)
+        else:
+            return [mid]
+
+
 
     # old slowest algorithm
     # for i in range(len(a)):
