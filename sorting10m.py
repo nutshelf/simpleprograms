@@ -46,22 +46,26 @@ def item_in_list_binary_search(a: list, x, lb=None, ub=None):
     if lb == None:
         lb = 0
     if ub == None:
-        ub = len(a)
+        ub = len(a) - 1
     mid = int((lb + ub) / 2)
     #desc order list
-    if a[0] < a[-1]:
+    if a[lb] < a[ub]:
         mn = 1
-    elif a[0] > a[-1]:
+    elif a[lb] > a[ub]:
         mn = -1
-    else: # a[0] == a[-1] --> len = 1
-
-
-        if a[mid] < x:
-            res = item_in_list_binary_search(a, x, mid, ub)
-        elif x < a[mid]:
-            res = item_in_list_binary_search(a, x, lb, mid)
+    else: # a[lb] == a[ub] либо массив из одного элемента, либо много одинаковых элементов (но такого быть не может в данном случае)
+        if x >= a[ub]:
+            exit_code = ub + 1
         else:
-            return [mid]
+            exit_code = lb - 1
+        return exit_code
+
+    if a[mid] < x:
+        res = item_in_list_binary_search(a, x, mid, ub)
+    elif x < a[mid]:
+        res = item_in_list_binary_search(a, x, lb, mid)
+    else:
+        return [mid]
 
 
 
