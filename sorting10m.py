@@ -50,36 +50,40 @@ def item_in_list_binary_search(a: list, x):
     ['lower', 0]  if x < a[0]
     ['upper', len(a)]  if x > a[-1]
     """
+    time0 = time.time()
     lb = 0
-    ub = len(a)-1
+    ub = len(a) - 1
     if not a:  # no elements in list
-        return ['upper', 0]
+        return [['upper', 0], [time.time() - time0, 0, 0]]
     if ub == 0:  # one element in list
         if x < a[0]:
-            return ['low', 0]
+            output = ['low', 0]
         elif x > a[0]:
-            return ['upper', 0]
+            output = ['upper', 1]
         else:
-            return ['exact', 0]
-
+            output = ['exact', 0]
+        return [output, [time.time() - time0, 0, 0]]
+    time1 = time.time()
     while not (lb + 1 == ub):
         mid = int((lb + ub) / 2)
         if x < a[mid]:
             ub = mid
         else:
             lb = mid
-
+    time2 = time.time()
     if x < a[lb]:
-        return ['low', 0]
-    if x > a[ub]:
-        return ['upper', len(a)]
-    if x == a[lb]:
-        return ['exact', lb]
-    if a[lb] < x < a[ub]:
-        return ['range', ub]
-    if x == a[ub]:
-        return ['exact', ub]
-    raise ValueError('Some local error')
+        output = ['low', 0]
+    elif x > a[ub]:
+        output = ['upper', len(a)]
+    elif x == a[lb]:
+        output = ['exact', lb]
+    elif a[lb] < x < a[ub]:
+        output = ['range', ub]
+    elif x == a[ub]:
+        output = ['exact', ub]
+    else:
+        raise ValueError('Some local error')
+    return [output, [time.time() - time2, time2 - time1, time1 - time0]]
 
 
 # def item_in_list_binary_search_r(a: list, x, lb=None, ub=None):
@@ -110,12 +114,15 @@ def item_in_list_binary_search(a: list, x):
 #     return res
 
 
-def main(num=5 * 1000 * 1000):
+def main(num=1 * 1000 * 1000):
     a = []
     start_time = time.time()
     time_prime_total = 0.0
     time_find_duplicates_total = 0.0
     time_add_list_total = 0.0
+    x_in_a_time1 = 0.0
+    x_in_a_time2 = 0.0
+    x_in_a_time3 = 0.0
     for i in range(num):
         x = int(rnd() * (10 ** (rnd() * 5)) + 2)
         #print(x, a)
@@ -126,12 +133,15 @@ def main(num=5 * 1000 * 1000):
 
         time2 = time.time()
         x_in_a_result = item_in_list_binary_search(a, x)
-        x_in_a_bool = x_in_a_result[0] == 'exact'
+        x_in_a_bool = x_in_a_result[0][0] == 'exact'
+        x_in_a_time1 += x_in_a_result[1][0]
+        x_in_a_time2 += x_in_a_result[1][1]
+        x_in_a_time3 += x_in_a_result[1][2]
         time_find_duplicates_total += time.time() - time2
 
         time3 = time.time()
         if not x_in_a_bool and is_prime_bool:
-            add(a, x, x_in_a_result[1])
+            add(a, x, x_in_a_result[0][1])
         time_add_list_total += time.time() - time3
 
     print(f"Num of source numbers: {num:_}")
@@ -139,6 +149,9 @@ def main(num=5 * 1000 * 1000):
     print(f"Total time FOR x {num:_}: {time.time() - start_time:.3}s")
     print(f"Total time for prime checking: {time_prime_total:.3}s")
     print(f"Total time for finding duplicates in a: {time_find_duplicates_total:.3}s")
+    print(f"- special cases checking: {x_in_a_result[1][0]:.3}s")
+    print(f"- binary searching: {x_in_a_result[1][1]:.3}s")
+    print(f"- choice selecting: {x_in_a_result[1][2]:.3}s")
     print(f"Total time for adding results to list: {time_add_list_total:.3}s")
     # 1m elements => 32s
     # 2m elements binary search => 30s
