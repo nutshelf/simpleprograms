@@ -38,14 +38,13 @@ def print_a(a: list, num_in_row):
 
 def item_in_list_binary_search(a: list, x):
     """
-    Function for search in sorted list of elements in increasing order
-    output is [string, index to insert x]. Sorted order will be saved
+    Function for search in sorted list of elements in increasing order.
+    Output is [string, index to insert x]. Sorted order will be saved
     ['exact', i]        if a[i] == x
     ['range', i]        if a[i-1] < x < a[i], inserting at a[i]
     ['lower', 0]        if x < a[0]
     ['upper', len(a)]   if x > a[-1]
     """
-    time0 = time.time()
     lb = 0
     ub = len(a) - 1
     if not a:  # no elements in list
@@ -140,7 +139,9 @@ def main(num=1 * 1000 * 1000):
 
     print_a(a[0:50], 30)
     print("...", end="")
-    print_a(a[-50:], 30)
+    print_a(a[-50:-46], 30)
+    print()
+    print_a(a[-45:], 30)
     print()
     return
 
