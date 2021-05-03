@@ -26,14 +26,25 @@ def add(a: list, x: int, i):
     return
 
 
-def print_a(a: list, num_in_row):
-    i = 0
-    while i < len(a):
-        print(a[i], end=" ")
-        i += 1
-        if i % num_in_row == 0 and i > 0:
+def print_fw(list1, row_width, rest_width=None):
+    """
+    Prints strings with fixed max length(width).
+    First arg is List or String
+    Function return rest_width - number of symbols in last output row to print to fixed width 'row_width'
+    """
+    if type(list1) is str:
+        list1 = [list1]
+    if rest_width is None:
+        rest_width = row_width
+
+    for i in range(0, len(list1)):
+        elem_length = len(str(list1[i]))
+        if elem_length > rest_width:
             print()
-    return
+            rest_width = row_width
+        rest_width -= elem_length + 1
+        print(list1[i], end=" ")
+    return rest_width
 
 
 def item_in_list_binary_search(a: list, x):
@@ -47,7 +58,7 @@ def item_in_list_binary_search(a: list, x):
     """
     lb = 0
     ub = len(a) - 1
-    if not a:  # no elements in list
+    if a == []:  # no elements in list
         return ['upper', 0]
     if ub == 0:  # one element in list
         if x < a[0]:
@@ -57,20 +68,21 @@ def item_in_list_binary_search(a: list, x):
         else:
             output = ['exact', 0]
         return output
+
     while not (lb + 1 == ub):
         mid = int((lb + ub) / 2)
         if x < a[mid]:
             ub = mid
         else:
             lb = mid
-    if x < a[lb]:
+    if a[lb] < x < a[ub]:
+        output = ['range', ub]
+    elif x < a[lb]:
         output = ['low', 0]
     elif x > a[ub]:
         output = ['upper', len(a)]
     elif x == a[lb]:
         output = ['exact', lb]
-    elif a[lb] < x < a[ub]:
-        output = ['range', ub]
     elif x == a[ub]:
         output = ['exact', ub]
     else:
@@ -106,12 +118,18 @@ def item_in_list_binary_search(a: list, x):
 #     return res
 
 
-def main(num=1 * 1000 * 1000):
+def main(num=10 * 10 * 1):
     a = []
     start_time = time.time()
     time_prime_total = 0.0
     time_find_duplicates_total = 0.0
     time_add_list_total = 0.0
+
+    exact_total_count = 0
+    range_total_count = 0
+    low_total_count = 0
+    upper_total_count = 0
+
     for i in range(num):
         x = int(rnd() * 10000 + 2)
 
@@ -123,6 +141,18 @@ def main(num=1 * 1000 * 1000):
         x_in_a_result = item_in_list_binary_search(a, x)
         x_in_a_bool = x_in_a_result[0] == 'exact'
         time_find_duplicates_total += time.time() - time2
+        if x_in_a_result[0] == 'exact':
+            exact_total_count += 1
+        elif: x_in_a_result[0] == 'exact'
+            range_total_count +=
+        elif x < a[lb]:
+        output = ['low', 0]
+        elif x > a[ub]:
+        output = ['upper', len(a)]
+        elif x == a[lb]:
+        output = ['exact'
+
+
 
         time3 = time.time()
         if not x_in_a_bool and is_prime_bool:
@@ -134,14 +164,20 @@ def main(num=1 * 1000 * 1000):
     print(f"Total time FOR x {num:_}: {time.time() - start_time:.3}s")
     print(f" time for prime checking: {time_prime_total:.3}s")
     print(f" time for finding duplicates in a: {time_find_duplicates_total:.3}s")
-    print(f" time for adding results to list: {time_add_list_total:.3}s")
-    # 10m => 70s
 
-    print_a(a[0:50], 30)
-    print("...", end="")
-    print_a(a[-50:-46], 30)
-    print()
-    print_a(a[-45:], 30)
+
+
+    print(f" time for adding results to list: {time_add_list_total:.3}s")
+    # 10m => 55.4s
+    # 1229 p.n./ 10m n.
+    # 38.5s for finding duplicates
+
+    if len(a) > 101:
+        rest_width = print_fw((a[0:50]), 150)
+        rest_width = print_fw("...", 150, rest_width)
+        print_fw(a[-50:], 150, rest_width)
+    else:
+        print_fw(a, 150)
     print()
     return
 
