@@ -110,11 +110,14 @@ def main(num=10 * 1000 * 1000):
     rnd_a = 1
     rnd_b = 1000*1000  # random from [a, b]
     start_time = time.time()
-    
+
+    print(f"Num of source numbers: {num:_}")
+    print(f"Random numbers from [{rnd_a}, {rnd_b:_}]")
+
     # time_prime_total = 0.0
     # time_find_duplicates_total = 0.0
     # time_add_list_total = 0.0
-    # 
+
     # exact_total_count = 0
     # range_total_count = 0
     # low_total_count = 0
@@ -149,8 +152,6 @@ def main(num=10 * 1000 * 1000):
                 add(a, x, x_in_a[1])
                 # time_add_list_total += time.time() - time_add
 
-    print(f"Num of source numbers: {num:_}")
-    print(f"Numbers from [{rnd_a}, {rnd_b:_}]")
     print(f"Num of prime numbers: {len(a):_}")
     print(f"Time total: {time.time() - start_time:.4}s")
     # print(f" time for prime checking: {time_prime_total:.3}s")
@@ -163,8 +164,8 @@ def main(num=10 * 1000 * 1000):
     # print(f"   upper numbers:", upper_numbers)
     # print(f" time for adding results to list: {time_add_list_total:.3}s")
 
-    if len(a) > 101:
-        print_fw(a[0:50] + ["..."] + a[-50:], 100)
+    if len(a) > 100:
+        print_fw(a[0:40] + ["..."] + a[-30:], 100)
     else:
         print_fw(a, 100)
     print()
