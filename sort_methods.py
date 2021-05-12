@@ -1,21 +1,30 @@
 from random import random
 
 
-def merge_sort(a, lb=None, ub=None):
+def max(a, b):
+    if a > b:
+        return a
+    return b
+
+
+def merge_sort(a, lb=None, ub=None, depth=None):
     """
     Recursive merge sort inside in a[]. For temporarily usage there is b[]. Memory is len(b[])=len(a[])
     """
     if lb is None or ub is None:
         lb = 0
         ub = len(a) - 1
+    if depth is None:
+        depth = 1
+
     n = ub - lb + 1
     n2 = n // 2
     if n < 2:
-        return
+        return depth
 
-    merge_sort(a, lb, lb + n2 - 1)  # half(n//2 elements) for even,
+    depth1 = merge_sort(a, lb, lb + n2 - 1, depth + 1)  # half(n//2 elements) for even,
     #  less part for odd, incl. n=3 (n//2 elements)
-    merge_sort(a, lb + n2, ub)  # half(n//2 elements) for even,
+    depth2 = merge_sort(a, lb + n2, ub, depth + 1)  # half(n//2 elements) for even,
     #  greater part for odd, incl. n=3 (n - n//2 elements)
     # merging into b[]:
     i = j = k = 0
@@ -41,10 +50,10 @@ def merge_sort(a, lb=None, ub=None):
     for k in range(len(b)):
         a[lb + k] = b[k]
     # print(f"merged [{lb}:{ub}]", a[lb:ub+1])
-    return
+    return max(depth1, depth2)
 
 
-def quick_sort(a: list, lo=None, up=None):
+def quick_sort(a: list, lo=None, up=None, depth=None):
     """
     Recursive Toni Hoar's sorting with three-part partitioning with median of 3 elements: at beginning, middle,
     end of array. Assume a[lo] is first element, a[up] is last element of array part to sort or whole array.
@@ -52,15 +61,17 @@ def quick_sort(a: list, lo=None, up=None):
     if lo is None or up is None:
         lo = 0
         up = len(a) - 1
+    if depth is None:
+        depth = 1
 
     # base case: list consist of <=1
     if up - lo <= 0:
-        return
+        return depth
 
     if a[lo] > a[up]:
         a[lo], a[up] = a[up], a[lo]  # 1 of 3 swap (look about median later)
-    if up - lo == 1:  # base case 2 elements. Complete
-        return
+    if up - lo == 1:  # simultaneously this was base case with 2 elements. It was completed
+        return depth
 
     mid = (lo + up) // 2
     if a[lo] > a[mid]:
@@ -68,7 +79,7 @@ def quick_sort(a: list, lo=None, up=None):
     if up - lo == 2:
         if a[mid] > a[up]:
             a[mid], a[up] = a[up], a[mid]  # Now a[lo] <= a[mid] <= a[up]. Base case of 3 elements complete.
-        return
+        return depth
     if a[mid] < a[up]:
         a[mid], a[up] = a[up], a[mid]  # 3 of 3 swap for median.
     # Three IF and swap operators used for finding median and swapping elements in ascending order except last two,
@@ -86,31 +97,48 @@ def quick_sort(a: list, lo=None, up=None):
         while a[j] >= a[up]:
             j -= 1
             if j <= i:
-                # print(f"break. list={a}, ind={lo}..{up}, i={i}, j={j}, pivot a[{up}]={a[up]}")
                 break
         if j <= i:
             break
         a[i], a[j] = a[j], a[i]
     a[i], a[up] = a[up], a[i]
-    # Now pivot is at a[j+1]
-    # print(a, "pivot index =", j + 1, end=" ")
-    # print(f"-left part[{lo}:{i-1}]")
-    quick_sort(a, lo, i-1)
-    # print(f"-right part[{i+1}:{up}]")
-    quick_sort(a, i+1, up)
-    return
+
+    # try next "fat sort" on Hoar's definition
+
+    depth1 = quick_sort(a, lo, i-1, depth + 1)
+    depth2 = quick_sort(a, i+1, up, depth + 1)
+
+    return max(depth1, depth2)
 
 
 def main():
-    #n = 2
-    #a = [int(random() * 10 + 5) for i in range(n)]
-    a = [1, 2, 1, 1]
+    n = 1000*100
+    a = [int(random() * 1000) for i in range(n)]
+    # a = [0, 0, 0, 0]
     b = list(a)
-    print("source:\t\t", a)
-    merge_sort(a)
-    print("merge sort:\t", a)
-    quick_sort(b)
-    print("quick_sort:\t", b)
+    c = list(a)
+
+    # print("source:\t\t", a)
+
+    depth = merge_sort(b)
+    print("merge sort max depth = ", depth)
+    # print("merge sort:\t", b)
+
+    depth = quick_sort(c)
+    print("quick sort max depth = ", depth)
+    # print("quick_sort:\t", c)
+
+    eq = True
+    for i in range(n):
+        if b[i] != c[i]:
+            eq = False
+            print(f"sort are not equal in result! i = {i} {b[i]}!={c[i]}")
+            # print("source:\t\t", a)
+            # print("merge sort:\t", b)
+            # print("quick_sort:\t", c)
+            break
+    if eq:
+        print("sorts are eq")
     return
 
 
